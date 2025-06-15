@@ -1,11 +1,22 @@
 require('dotenv').config(); 
 const express = require('express');
-const { ApolloServer, gql } = require('apollo-server-express');
+const { ApolloServer } = require('apollo-server-express');
 const NodeCache = require('node-cache');
 const typeDefs = require('./graphqlRequests/TypeDefs');
 const resolvers = require('./graphqlRequests/resolvers')
 const { getUserFromToken } = require('./auth/auth');
+const { Pool } = require('pg'); // or  require('mysql2') -- MySQL
 
+
+
+// Create pool instance (you might want to pass this from server.js instead)
+const pool = new Pool({
+  user: process.env.DB_USER,           
+  host: process.env.DB_HOST,           
+  database: process.env.DB_NAME,       
+  password: process.env.DB_PASSWORD,
+  port: process.env.DB_PORT,           
+});
 
 const app = express();
 const cache = new NodeCache();
@@ -16,24 +27,24 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
   context: ({ req }) => {
-    // Expecting the HTTP header "Authorization: Bearer <token>"
+    // Expecting "Authorization: Bearer <token>"
     const authHeader = req.headers.authorization || '';
     const token = authHeader.split(' ')[1];
     const user = getUserFromToken(token);
-    
-    return { user, cache };
+    console.log("user:", user)
+    return { user, cache, pool};
   },
-  // Optionally, use Apollo’s built-in cache control settings.
+  //Apollo’s built-in cache control settings.
   cacheControl: {
-    defaultMaxAge: 10,
+    defaultMaxAge: 30,
   },
-  // Enable introspection for development
+  // Enable for development
   introspection: true,
   playground: true,
 });
 
 
-// Start the Apollo Server and apply it as middleware to the Express app.
+// Apollo Server , apply it as middleware to the Express app.
 async function startServer() {
   try {
     await server.start();

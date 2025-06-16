@@ -75,15 +75,21 @@ Clear documentation including setup instructions, GraphQL schema details, usage 
 Test Reports:
 Reports from unit and integration testing, along with security audits focusing on data access, mutations, and subscriptions.
 Milestones & Timeframe
-Week 1:
-Setup GraphQL server.
-Design GraphQL schema, focusing on the Article, Author, Category, and optionally Comment types.
+
+
+
+[VVV] Week 1:
+[V] Setup GraphQL server.
+[V] Design GraphQL schema, focusing on the Article, Author, Category, and optionally Comment types.
+
 Week 2:
 Implement resolvers for queries and mutations against the existing news articles database.
 Develop error handling and input validation.
+
 Week 3:
 Implement subscriptions for live updates and integrate caching mechanisms.
 Begin automated testing for API operations.
+
 Week 4:
 Finalize API documentation and optional front-end integration.
 Complete integration tests and perform a review for security and performance.

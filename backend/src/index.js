@@ -6,8 +6,9 @@ const typeDefs = require('./graphqlRequests/TypeDefs');
 const resolvers = require('./graphqlRequests/resolvers')
 const { getUserFromToken } = require('./auth/auth');
 const { Pool } = require('pg'); // or  require('mysql2') -- MySQL
-
-
+const buildContext = require('./graphqlRequests/context');
+const helmet = require('helmet');
+const cors = require('cors');
 
 // Create pool instance (you might want to pass this from server.js instead)
 const pool = new Pool({
@@ -21,19 +22,22 @@ const pool = new Pool({
 const app = express();
 const cache = new NodeCache();
 
+// Middleware & Rate Limiting
+app.use(helmet());
+app.use(cors({
+  origin: process.env.FRONTEND_URL,
+  credentials: true
+}));
+
+app.get('/health', (req, res) => {
+  res.send('OK');
+});
 
 // Set up Apollo Server with context that includes the authenticated user and cache instance.
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  context: ({ req }) => {
-    // Expecting "Authorization: Bearer <token>"
-    const authHeader = req.headers.authorization || '';
-    const token = authHeader.split(' ')[1];
-    const user = getUserFromToken(token);
-    console.log("user:", user)
-    return { user, cache, pool};
-  },
+  context: (req) => buildContext(req, cache, pool),
   //Apollo’s built-in cache control settings.
   cacheControl: {
     defaultMaxAge: 30,

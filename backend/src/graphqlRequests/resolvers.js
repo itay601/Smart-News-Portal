@@ -17,14 +17,19 @@ const resolvers = {
         throw new Error('Failed to fetch articles');
       }
     },
-    getAllUsers: async (_, __, { pool, context }) => {
+    getAllUsers: async (_, __, {cache ,pool, context }) => {
       // const currentUser = await getUserFromToken(context.token);
       // requireAdmin(currentUser);
-      
+      const cachedUsers = cache.get('articles');
+        if (cachedUsers) {
+          console.log('Returning articles from cache');
+          return cachedUsers;
+        }
       const result = await pool.query(
         'SELECT username, email, role FROM users ORDER BY username'
       );
-      
+      cache.set('users', result, 10);
+      console.log('Returning users from database');
       return result.rows;
     },
     // Admin-only: Get specific user by username
@@ -83,6 +88,25 @@ const resolvers = {
       }
       
       return currentUser;
+    },
+    // Get all stock prices
+    stockPrices: async (_, __, { cache, pool }) => {
+      try {
+        const cachedStockPrices = cache.get('stockPrices');
+        if (cachedStockPrices) {
+          console.log('Returning stock prices from cache');
+          return cachedStockPrices;
+        }
+        
+        // Assuming that the table "stock_prices" exists in your database
+        const { rows } = await pool.query('SELECT * FROM stock_prices ORDER BY symbol, date');
+        cache.set('stockPrices', rows, 10);
+        console.log('Returning stock prices from database');
+        return rows;
+      } catch (error) {
+        console.error('Error fetching stock prices:', error);
+        throw new Error('Failed to fetch stock prices');
+      }
     }
   },
 

@@ -24,6 +24,16 @@ const typeDefs = gql`
     content: String
     createdAt: String
   }
+
+  type StockPrice {
+    symbol: String!
+    date: String! 
+    open: Float
+    high: Float
+    low: Float
+    close: Float
+    volume: Float 
+  }
   
   type Query {
     articles: [Article]
@@ -31,6 +41,7 @@ const typeDefs = gql`
     getUserByUsername(username: String!): User
     getUserWithPasswords(username: String!): UserWithPasswords
     me: User
+    stockPrices: [StockPrice]
   }
    type AuthPayload {
     token: String!

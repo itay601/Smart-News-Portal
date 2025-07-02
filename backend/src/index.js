@@ -9,6 +9,10 @@ const { Pool } = require('pg'); // or  require('mysql2') -- MySQL
 const buildContext = require('./graphqlRequests/context');
 const helmet = require('helmet');
 const cors = require('cors');
+const createDataAgentRouter = require('./routes/dataForAgent');
+
+
+
 
 // Create pool instance (you might want to pass this from server.js instead)
 const pool = new Pool({
@@ -29,6 +33,10 @@ app.use(cors({
   origin: process.env.FRONTEND_URL,
   credentials: true
 }));
+app.use(express.json());
+
+const dataAgentRouter = createDataAgentRouter(pool);
+app.use('/v1/api', dataAgentRouter);
 
 app.get('/health', (req, res) => {
   res.send('OK');

@@ -12,10 +12,10 @@ function createDataAgentRouter(pool) {
     if (!economic_term) {
       return res.status(400).json({ error: 'economic_term query parameter is required.' });
     }
-
+      //CHANGE IN PRODUCTION
     try {
       // Query for articles_table using economic_term
-      const query1 = 'SELECT * FROM articles_table WHERE economic_term = $1';
+      const query1 =   'SELECT * FROM articles WHERE title = $1'; //'SELECT * FROM articles WHERE economic_term = $1';
       const { rows: raw1 } = await pool.query(query1, [economic_term]);
 
       // If symbol is provided, also fetch data for stock_prices

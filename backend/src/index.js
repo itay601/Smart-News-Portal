@@ -5,7 +5,7 @@ const NodeCache = require('node-cache');
 const typeDefs = require('./graphqlRequests/TypeDefs');
 const resolvers = require('./graphqlRequests/resolvers')
 const { getUserFromToken } = require('./auth/auth');
-const { Pool } = require('pg'); // or  require('mysql2') -- MySQL
+const mysql = require('mysql2'); // Pool for pg  or  require('mysql2') 
 const buildContext = require('./graphqlRequests/context');
 const helmet = require('helmet');
 const cors = require('cors');
@@ -13,15 +13,21 @@ const createDataAgentRouter = require('./routes/dataForAgent');
 
 
 
-
-// Create pool instance (you might want to pass this from server.js instead)
-const pool = new Pool({
+const pool = mysql.createPool({
   user: process.env.DB_USER,           
   host: process.env.DB_HOST,           
   database: process.env.DB_NAME,       
   password: String(process.env.DB_PASSWORD),
   port: process.env.DB_PORT,           
 });
+// Create pool instance (you might want to pass this from server.js instead)
+//const pool = new Pool({
+//  user: process.env.DB_USER,           
+ // host: process.env.DB_HOST,           
+  //database: process.env.DB_NAME,       
+  //password: String(process.env.DB_PASSWORD),
+  ///port: process.env.DB_PORT,           
+//});
 
 
 const app = express();

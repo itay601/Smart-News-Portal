@@ -20,8 +20,14 @@ const typeDefs = gql`
 
   type Article {
     id: ID!
+    source_name: String
+    author: String
     title: String!
-    content: String
+    description: String
+    url: String
+    urlToImage: String
+    content: String!
+    economic_terms: String
     createdAt: String
   }
 

@@ -1,3 +1,5 @@
+const { getUserFromToken } = require('../auth/auth');
+
 const resolvers = {
   Query: {
     articles: async (_, __, { cache, pool }) => {
@@ -8,7 +10,7 @@ const resolvers = {
           return cachedArticles;
         }
         
-        const { rows } = await pool.query('SELECT * FROM articles ORDER BY id');
+        const [rows] = await pool.query('SELECT * FROM articles_table ORDER BY id');
         cache.set('articles', rows, 10);
         console.log('Returning articles from database');
         return rows;
@@ -20,55 +22,55 @@ const resolvers = {
     getAllUsers: async (_, __, {cache ,pool, context }) => {
       // const currentUser = await getUserFromToken(context.token);
       // requireAdmin(currentUser);
-      const cachedUsers = cache.get('articles');
+      const cachedUsers = cache.get('users');
         if (cachedUsers) {
           console.log('Returning articles from cache');
           return cachedUsers;
         }
-      const result = await pool.query(
-        'SELECT username, email, role FROM users ORDER BY username'
+      const [rows] = await pool.query(
+        'SELECT username, email, role FROM user ORDER BY username'
       );
-      cache.set('users', result, 10);
+      cache.set('users', rows, 10);
       console.log('Returning users from database');
-      return result.rows;
+      return rows;
     },
     // Admin-only: Get specific user by username
     getUserByUsername: async (_, { username }, { pool, context }) => {
       // const currentUser = await getUserFromToken(context.token);
       // requireAdmin(currentUser);
       
-      const result = await pool.query(
-        'SELECT username, email, role FROM users WHERE username = $1',
+      const [rows] = await pool.query(
+        'SELECT username, email, role FROM user WHERE username = ?',
         [username]
       );
       
-      if (result.rows.length === 0) {
+      if (rows.length === 0) {
         throw new Error('User not found');
       }
       
-      return result.rows[0];
+      return rows[0];
     },
     // Admin-only: Get user with password history
     getUserWithPasswords: async (_, { username }, { pool, context }) => {
       // const currentUser = await getUserFromToken(context.token);
       // requireAdmin(currentUser);
       
-      const userResult = await pool.query(
-        'SELECT username, email, role FROM users WHERE username = $1',
+      const [userResult] = await pool.query(
+        'SELECT username, email, role FROM user WHERE username = ?',
         [username]
       );
       
-      if (userResult.rows.length === 0) {
+      if (userResult.length === 0) {
         throw new Error('User not found');
       }
       
-      const passwordResult = await pool.query(
-        'SELECT passwordtemp, passwordsecond, passwordthird FROM userpass WHERE uname = $1',
+      const [passwordResult] = await pool.query(
+        'SELECT passwordtemp, passwordsecond, passwordthird FROM userpass WHERE uname = ?',
         [username]
       );
       
-      const user = userResult.rows[0];
-      const passwords = passwordResult.rows[0] || {};
+      const user = userResult[0];
+      const passwords = passwordResult[0] || {};
       
       return {
         username: user.username,
@@ -86,9 +88,9 @@ const resolvers = {
       if (!currentUser) {
         throw new Error('Authentication required');
       }
-      
       return currentUser;
     },
+
     // Get all stock prices
     stockPrices: async (_, __, { cache, pool }) => {
       try {
@@ -99,7 +101,7 @@ const resolvers = {
         }
         
         // Assuming that the table "stock_prices" exists in your database
-        const { rows } = await pool.query('SELECT * FROM stock_prices ORDER BY symbol, date');
+        const [rows] = await pool.query('SELECT * FROM stock_prices ORDER BY symbol, date');
         cache.set('stockPrices', rows, 10);
         console.log('Returning stock prices from database');
         return rows;
@@ -117,9 +119,9 @@ const resolvers = {
       }
       
       try {
-        const result = await pool.query('DELETE FROM articles WHERE id = $1', [id]);
+        const [result] = await pool.query('DELETE FROM articles_table WHERE id = ?', [id]);
         cache.del('articles');
-        return result.rowCount > 0;
+        return result.affectedRows  > 0;
       } catch (error) {
         console.error('Error deleting article:', error);
         throw new Error('Failed to delete article');

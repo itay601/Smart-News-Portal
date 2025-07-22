@@ -15,13 +15,13 @@ function createDataAgentRouter(pool) {
       //CHANGE IN PRODUCTION
     try {
       // Query for articles_table using economic_term
-      const query1 =   'SELECT * FROM articles WHERE title = $1'; //'SELECT * FROM articles WHERE economic_term = $1';
-      const { rows: raw1 } = await pool.query(query1, [economic_term]);
+      const query1 =   'SELECT * FROM articles_table WHERE economic_terms = ?'; //'SELECT * FROM articles WHERE economic_term = $1';
+      const [raw1] = await pool.query(query1, [economic_term]);
 
       // If symbol is provided, also fetch data for stock_prices
       if (symbol) {
-        const query2 = 'SELECT * FROM stock_prices WHERE symbol = $1';
-        const { rows: raw2 } = await pool.query(query2, [symbol]);
+        const query2 = 'SELECT * FROM stock_prices WHERE symbol = ?';
+        const [raw2] = await pool.query(query2, [symbol]);
         return res.json({ raw1, raw2 });
       }
       res.json(raw1);

@@ -1,5 +1,5 @@
 import React from 'react';
-import { BarChart2, MessageSquare, Search, Database, Settings, LogOut, ChevronLeft } from 'lucide-react';
+import { BarChart2, MessageSquare, Search, Database, Settings, LogOut, ChevronLeft, GitGraphIcon } from 'lucide-react';
 import NavItem from './NavItem';
 
 const Sidebar = ({ activePage, setActivePage, isSidebarOpen, setSidebarOpen, isMobileMenuOpen, setMobileMenuOpen, handleSignOut }) => {
@@ -27,6 +27,7 @@ const Sidebar = ({ activePage, setActivePage, isSidebarOpen, setSidebarOpen, isM
                     <NavItem icon={<MessageSquare size={20} />} label="Chat Agent" isActive={activePage === 'Chat Agent'} onClick={() => setActivePage('Chat Agent')} />
                     <NavItem icon={<Search size={20} />} label="Agent Analysis" isActive={activePage === 'Agent Analysis'} onClick={() => setActivePage('Agent Analysis')} />
                     <NavItem icon={<Database size={20} />} label="Data Fetching" isActive={activePage === 'Data Fetching'} onClick={() => setActivePage('Data Fetching')} />
+                    <NavItem icon={<GitGraphIcon size={20} />} label="Stocks Fetching" isActive={activePage === 'Stocks Fetching'} onClick={() => setActivePage('Stocks Fetching')} />
                 </ul>
             </nav>
 

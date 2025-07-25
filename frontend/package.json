@@ -59,5 +59,6 @@
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.1",
     "tailwindcss-cli": "^0.1.2"
-  }
+  },
+  "proxy": "http://129.159.138.109"
 }

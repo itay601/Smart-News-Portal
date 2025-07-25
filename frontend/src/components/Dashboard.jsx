@@ -20,6 +20,7 @@ import DashboardHome from './dashboard/DashboardHome';
 import ChatAgentPage from './dashboard/ChatAgentPage';
 import AgentAnalysisPage from './dashboard/AgentAnalysisPage';
 import DataFetchingPage from './dashboard/DataFetchingPage';
+import StocksFetch from './dashboard/StocksFetch';
 import SignInPage from './authPages/SignInPage';
 
 const Dashboard = () => {
@@ -41,6 +42,8 @@ const Dashboard = () => {
                 return <AgentAnalysisPage />;
             case 'Data Fetching':
                 return <DataFetchingPage />;
+            case 'Stocks Fetching':
+                return <StocksFetch />
             default:
                 return <DashboardHome />;
         }

@@ -10,7 +10,7 @@ const resolvers = {
           return cachedArticles;
         }
         
-        const [rows] = await pool.query('SELECT * FROM articles_table ORDER BY id');
+        const [rows] = await pool.query('SELECT * FROM articles_table ORDER BY publishedAt LIMIT 100');
         cache.set('articles', rows, 10);
         console.log('Returning articles from database');
         return rows;
@@ -52,8 +52,8 @@ const resolvers = {
     },
     // Admin-only: Get user with password history
     getUserWithPasswords: async (_, { username }, { pool, context }) => {
-      // const currentUser = await getUserFromToken(context.token);
-      // requireAdmin(currentUser);
+       const currentUser = await getUserFromToken(context.token);
+       requireAdmin(currentUser);
       
       const [userResult] = await pool.query(
         'SELECT username, email, role FROM user WHERE username = ?',
@@ -81,7 +81,7 @@ const resolvers = {
         passwordThird: passwords.passwordthird,
       };
     },
-    // Regular user: Get own profile
+    // Regular user: Get own profile TODO:
     me: async (_, __, { context }) => {
       // Ensure that getUserFromToken is defined and imported correctly
       const currentUser = await getUserFromToken(context.token);
@@ -90,7 +90,25 @@ const resolvers = {
       }
       return currentUser;
     },
-
+    // Get all related TWEETS
+    tweets: async (_, __, { cache, pool }) => {
+      try {
+        const cachedStockPrices = cache.get('tweets');
+        if (cachedStockPrices) {
+          console.log('Returning tweets from cache');
+          return cachedStockPrices;
+        }
+        
+        // Assuming that the table "stock_prices" exists in your database
+        const [rows] = await pool.query('SELECT * FROM tweets ORDER BY reply_count, like_count LIMIT 20');
+        cache.set('tweets', rows, 10);
+        console.log('Returning stock prices from database');
+        return rows;
+      } catch (error) {
+        console.error('Error fetching tweets:', error);
+        throw new Error('Failed to fetch tweets');
+      }
+    },
     // Get all stock prices
     stockPrices: async (_, __, { cache, pool }) => {
       try {
@@ -103,6 +121,30 @@ const resolvers = {
         // Assuming that the table "stock_prices" exists in your database
         const [rows] = await pool.query('SELECT * FROM stock_prices ORDER BY symbol, date');
         cache.set('stockPrices', rows, 10);
+        console.log('Returning stock prices from database');
+        return rows;
+      } catch (error) {
+        console.error('Error fetching stock prices:', error);
+        throw new Error('Failed to fetch stock prices');
+      }
+    },
+
+    // Get Specific stock prices for GRAPH (UI)
+    specificStockPrices: async (_, { symbol }, { cache, pool }) => {
+      try {
+        const cacheKey = `specificStockPrices_${symbol}`;
+        const cachedStockPrices = cache.get(cacheKey);
+        if (cachedStockPrices) {
+          console.log('Returning stock prices from cache');
+          return cachedStockPrices;
+        }
+
+        const [rows] = await pool.query(
+          'SELECT * FROM stock_prices WHERE symbol = ? ORDER BY date',
+          [symbol]
+        );
+
+        cache.set(cacheKey, rows, 10); // Cache per symbol
         console.log('Returning stock prices from database');
         return rows;
       } catch (error) {

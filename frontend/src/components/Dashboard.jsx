@@ -12,6 +12,7 @@ import {
     //X,
     Search,
     Bell
+    
 } from 'lucide-react';
 
 import Sidebar from './dashboard/SideBar';
@@ -22,6 +23,8 @@ import AgentAnalysisPage from './dashboard/AgentAnalysisPage';
 import DataFetchingPage from './dashboard/DataFetchingPage';
 import StocksFetch from './dashboard/StocksFetch';
 import SignInPage from './authPages/SignInPage';
+import DataCenter from './dashboard/DataCenter';
+
 
 const Dashboard = () => {
     const [activePage, setActivePage] = useState('Dashboard');
@@ -43,7 +46,9 @@ const Dashboard = () => {
             case 'Data Fetching':
                 return <DataFetchingPage />;
             case 'Stocks Fetching':
-                return <StocksFetch />
+                return <StocksFetch />;
+            case 'Data Center':
+                return <DataCenter />;    
             default:
                 return <DashboardHome />;
         }

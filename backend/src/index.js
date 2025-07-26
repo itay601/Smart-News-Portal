@@ -4,13 +4,12 @@ const { ApolloServer } = require('apollo-server-express');
 const NodeCache = require('node-cache');
 const typeDefs = require('./graphqlRequests/TypeDefs');
 const resolvers = require('./graphqlRequests/resolvers')
-const { getUserFromToken } = require('./auth/auth');
 const mysql = require('mysql2/promise'); // Pool for pg  or  require('mysql2') 
 const buildContext = require('./graphqlRequests/context');
 const helmet = require('helmet');
 const cors = require('cors');
 const createDataAgentRouter = require('./routes/dataForAgent');
-
+const {authenticationRouter, RegisterRouter} = require('./auth/auth');
 
 
 const pool = mysql.createPool({
@@ -41,8 +40,15 @@ app.use(cors({
 }));
 app.use(express.json());
 
+
+//routers!!!
 const dataAgentRouter = createDataAgentRouter(pool);
+const authRouter = authenticationRouter(pool);
+const regRouter = RegisterRouter(pool);
 app.use('/v1/api', dataAgentRouter);
+app.use('/v1/auth', authRouter );
+app.use('/v1/auth', regRouter);
+
 
 app.get('/health', (req, res) => {
   res.send('OK');

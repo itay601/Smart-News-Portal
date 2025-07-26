@@ -41,6 +41,17 @@ const typeDefs = gql`
     volume: Float 
   }
   
+  type Tweet {
+    tweet_id: ID!
+    author_id: String!
+    created_at: String!
+    retweet_count: Int!
+    reply_count: Int!
+    like_count: Int!
+    quote_count: Int!
+    lang: String!
+  }
+
   type Query {
     articles: [Article]
     getAllUsers: [User!]!
@@ -48,8 +59,11 @@ const typeDefs = gql`
     getUserWithPasswords(username: String!): UserWithPasswords
     me: User
     stockPrices: [StockPrice]
+    specificStockPrices(symbol: String!) : [StockPrice]
+    tweets: [Tweet!]!
   }
-   type AuthPayload {
+   
+  type AuthPayload {
     token: String!
     user: User!
   }

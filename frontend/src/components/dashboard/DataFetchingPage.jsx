@@ -22,8 +22,13 @@ const DataFetchingPage = () => {
         
         try {
             // Construct query URL with URLSearchParams for cleaner parameter handling
-            const url = `/v1/api/dataagent?&economic_term=${term}`;
-            const response = await fetch(url);
+            const url = `/v1/api/dataagent?economic_term=${encodeURIComponent(term)}`;
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
             
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);

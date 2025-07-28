@@ -8,7 +8,7 @@ const DataFetchingPage = () => {
     const [error, setError] = useState('');
     const [economicTerm, setEconomicTerm] = useState('inflation');
     const [expandedArticle, setExpandedArticle] = useState(null);
-
+    
     // Predefined economic terms for quick selection
     const popularTerms = [
         'inflation', 'recession', 'gdp', 'unemployment', 'interest rates',
@@ -21,8 +21,9 @@ const DataFetchingPage = () => {
         setError('');
         
         try {
+            const baseApiUrl = process.env.REACT_APP_API_URL;
             // Construct query URL with URLSearchParams for cleaner parameter handling
-            const url = `/v1/api/dataagent?economic_term=${encodeURIComponent(term)}`;
+            const url = baseApiUrl + `/v1/api/dataagent?economic_term=${encodeURIComponent(term)}`;
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {

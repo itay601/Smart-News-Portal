@@ -22,9 +22,10 @@ const ChatAgentPage = () => {
         setInputMessage('');
 
         try {
+            const baseApiUrl = process.env.REACT_APP_API_URL;
             const url = selectedAgent === 'gemenai'
-                ? `/v1/api/gemenaiChatbot`
-                : `/v1/api/nvidiaAgent`;
+                ? baseApiUrl + `/v1/api/gemenaiChatbot`
+                : baseApiUrl + `/v1/api/nvidiaAgent`;
             
             const body = selectedAgent === 'gemenai'
                 ? { user_id: 'ita', message: inputMessage }

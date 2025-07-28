@@ -58,8 +58,10 @@ const StocksFetch = () => {
         };
 
         try {
+            const baseApiUrl = process.env.REACT_APP_API_URL;
+            const apiUrl = baseApiUrl + "/graphql";
             // Making the POST request to the GraphQL endpoint
-            const response = await fetch('http://129.159.138.109/graphql', {
+            const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

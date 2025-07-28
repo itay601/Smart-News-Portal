@@ -128,6 +128,7 @@ const AgentAnalysisPage = () => {
     const [results, setResults] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const baseApiUrl = process.env.REACT_APP_API_URL;
 
     const handleAnalyze = async () => {
         if (!term.trim()) {
@@ -145,7 +146,8 @@ const AgentAnalysisPage = () => {
         setResults(null);
 
         try {
-            const response = await fetch(`/v1/api/gemenaiAgentAnalysis`, {
+            const apiUrl = baseApiUrl + `/v1/api/gemenaiAgentAnalysis`;
+            const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: {
                     'accept': 'application/json',

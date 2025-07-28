@@ -22,7 +22,7 @@ const DataFetchingPage = () => {
         
         try {
             // Construct query URL with URLSearchParams for cleaner parameter handling
-            const url = `/v1/api/dataagent?dataagent&economic_term=${term}`;
+            const url = `/v1/api/dataagent?&economic_term=${term}`;
             const response = await fetch(url);
             
             if (!response.ok) {

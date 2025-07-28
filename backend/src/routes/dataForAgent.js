@@ -1,11 +1,11 @@
 const express = require('express');
+const axios = require('axios');
 
-
-
+//data for agent
 function createDataAgentRouter(pool) {
   const router = express.Router();
 
-  router.get('/dataagent', async (req, res) => {
+  router.post('/dataagent', async (req, res) => {
     const economic_term = req.query.economic_term;
     const symbol = req.query.symbol;
 
@@ -34,4 +34,105 @@ function createDataAgentRouter(pool) {
   return router;
 }
 
-module.exports = createDataAgentRouter;
+
+function nvidiaAgentRouter() {
+  const router = express.Router();
+
+  router.post('/nvidiaAgent', async (req, res) => {
+    const user_message = req.body.message;
+    if (!user_message) {
+      return res.status(400).json({ error: 'user_message query parameter is required.' });
+    }
+    const chatbotURL = 'http://chatbot-service:9090/chatbot/chatbotNvidia';
+
+    try {
+      // Send request to chatbot service
+      const response = await axios.post(chatbotURL, {
+      message: user_message 
+      });
+
+      // Return chatbot's response
+      res.json(response.data);
+    } catch (error) {
+      console.error('Error communicating with chatbot service:', error.message);
+      res.status(500).json({ error: 'Failed to talk to chatbot service.' });
+    }
+  });
+
+  return router;
+}
+
+
+function gemenaiAgentRouter() {
+  const router = express.Router();
+
+  router.post('/gemenaiAgentAnalysis', async (req, res) => {
+    // Get data from request body instead of query parameters for POST
+    const user_message = req.body.message;
+    const economic_term = req.body.economic_term;
+    const symbol = req.body.symbol;
+
+    if (!user_message) {
+      return res.status(400).json({ error: 'message field is required in request body.' });
+    }
+    if (!economic_term) {
+      return res.status(400).json({ error: 'economic_term field is required in request body.' });
+    }
+
+    const chatbotURL = 'http://chatbot-service:9090/chatbot/anlasisysAgent';
+
+    try {
+      // Send POST request to chatbot service with data in body
+      const response = await axios.post(chatbotURL, {
+      query: user_message,
+      economic_term,
+      symbol
+      });
+
+      // Return chatbot's response
+      res.json(response.data);
+    } catch (error) {
+      console.error('Error communicating with chatbot service:', error.message);
+      res.status(500).json({ error: 'Failed to talk to chatbot service.' });
+    }
+  });
+
+  return router;
+}
+
+function gemenaiCahtbotRouter() {
+  const router = express.Router();
+
+  router.post('/gemenaiChatbot', async (req, res) => {
+    const user_message = req.body.message;
+    const user_id = req.body.user_id;
+    if (!user_message || !user_id) {
+      return res.status(400).json({ error: 'user_message/user_id query parameter is required.' });
+    }
+    const chatbotURL = 'http://chatbot-service:9090/chatbot/chatbotGemenai';
+
+    try {
+      // Send request to chatbot service
+        const response = await axios.post(chatbotURL, {
+          user_id: user_id,
+          message: user_message
+        });
+      // Return chatbot's response
+        res.json(response.data);
+    } catch (error) {
+        console.error('Error communicating with chatbot service:', error.message);
+        res.status(500).json({ error: 'Failed to talk to chatbot service.' });
+    }
+  });
+
+  return router;
+}
+
+
+
+module.exports ={
+  createDataAgentRouter,
+  nvidiaAgentRouter,
+  gemenaiAgentRouter,
+  gemenaiCahtbotRouter
+  };

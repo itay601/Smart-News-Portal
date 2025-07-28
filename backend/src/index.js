@@ -8,7 +8,7 @@ const mysql = require('mysql2/promise'); // Pool for pg  or  require('mysql2')
 const buildContext = require('./graphqlRequests/context');
 const helmet = require('helmet');
 const cors = require('cors');
-const createDataAgentRouter = require('./routes/dataForAgent');
+const {createDataAgentRouter,nvidiaAgentRouter,gemenaiAgentRouter, gemenaiCahtbotRouter} = require('./routes/dataForAgent');
 const {authenticationRouter, RegisterRouter} = require('./auth/auth');
 
 
@@ -43,9 +43,19 @@ app.use(express.json());
 
 //routers!!!
 const dataAgentRouter = createDataAgentRouter(pool);
+const gemenaiagentRouter = gemenaiAgentRouter(pool);
+const nvidiaagentRouter = nvidiaAgentRouter(pool);
+const gemenaicahtbotRouter = gemenaiCahtbotRouter(pool);
+
+
 const authRouter = authenticationRouter(pool);
 const regRouter = RegisterRouter(pool);
 app.use('/v1/api', dataAgentRouter);
+app.use('/v1/api', gemenaiagentRouter);
+app.use('/v1/api', nvidiaagentRouter);
+app.use('/v1/api', gemenaicahtbotRouter);
+
+
 app.use('/v1/auth', authRouter );
 app.use('/v1/auth', regRouter);
 
@@ -64,7 +74,7 @@ const server = new ApolloServer({
     defaultMaxAge: 30,
   },
   // Enable for development
-  introspection: true,
+  introspection: true,  
   playground: true,
 });
 

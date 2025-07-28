@@ -46,56 +46,72 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
-// Expects: { username, email, password }
-// Route: Register a new user
-function RegisterRouter (pool) {
+function RegisterRouter(pool) {
+  const router = express.Router();
 
-const router = express.Router();
-router.post('/register', async (req, res) => {
-  try {
-    const { username, email, password } = req.body;
-    if (!username || !email || !password) {
-      return res.status(400).json({ message: 'All fields are required' });
+  router.post('/register', async (req, res) => {
+    try {
+      const { username, email, password } = req.body;
+      
+      // Validate input
+      if (!username || !email || !password) {
+        return res.status(400).json({ message: 'All fields are required' });
+      }
+      
+
+      // Check if user exists
+      const [userExist] = await pool.query(
+        'SELECT username, email, role FROM user WHERE username = ? OR email = ?',
+        [username, email]
+      );
+      
+      console.log('User existence query result:', userExist);
+
+      // MySQL2 returns rows directly in userExist
+      if (userExist.length > 0) {
+        console.log('Existing user(s) found:', userExist);
+        return res.status(409).json({ message: 'User already exists' });
+      }
+
+      // Hash password
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
+      console.log('Hashed password:', hashedPassword);
+
+      // Insert new user
+      const [result] = await pool.query(
+        'INSERT INTO user (username, email, password) VALUES (?, ?, ?)',
+        [username, email, hashedPassword]
+      );
+      console.log('Insert result:', result);
+
+      // Fetch the newly created user
+      const [rows] = await pool.query(
+        'SELECT username, email, role FROM user WHERE username = ?',
+        [username]
+      );
+      console.log('Fetched new user:', rows);
+
+      const newUser = rows[0];
+      if (!newUser) {
+        console.error('Failed to fetch newly created user');
+        return res.status(500).json({ message: 'Failed to retrieve new user' });
+      }
+
+      // Generate token (assuming generateToken is defined)
+      const token = generateToken(newUser);
+      console.log('Generated token:', token);
+
+      // Send response
+      res.status(201).json({ user: newUser, token });
+    } catch (error) {
+      console.error('Registration error:', error);
+      res.status(500).json({ message: 'Server error during registration', error: error.message });
     }
-    console.log({ username, email, password });
+  });
 
-    const userExist = await pool.query(
-      'SELECT username, email, password, role FROM user WHERE username = ? AND email = ?',
-      [username,email]
-    );
-    if (userExist.length > 0){
-       return res.status(201).json( {message: "USER EXIST ALREADY"} );
-    }
-    // hash password
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
-    
-    res.status(201).json({ message: 'User registered' });
-    // store in DB
-    const [result] = await pool.query(
-      'INSERT INTO user (username, email, password) VALUES (?, ?, ?)',
-      [username, email, hashedPassword]
-    );
-    
-    const insertedUsername = username;
-
-    // Then fetch the user
-    const [rows] = await pool.query(
-      'SELECT username, email, role FROM user WHERE username = ?',
-      [insertedUsername]
-    );
-
-    const newUser = result.rows[0];
-    const token = generateToken(newUser);
-    res.status(201).json({ user: newUser, token });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error during registration' });
-  }
-});
-return router;
+  return router;
 }
-
 
 
 
@@ -119,7 +135,6 @@ function authenticationRouter (pool) {
       
       user = result.rows[0];
     } else if (result && Array.isArray(result.results)) {
-      
       user = result.results[0];
     } else {
       // If result itself is the user object

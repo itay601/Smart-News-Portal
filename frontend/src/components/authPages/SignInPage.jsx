@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import Dashboard from '../Dashboard';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL + '/v1/auth';
 
 const SignInPage = () => {
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState(false);
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -152,50 +153,11 @@ const SignInPage = () => {
     setFormData({ username: '', email: '', password: '', confirmPassword: '' });
   };
 
-  // Dashboard component for logged-in users
-  const Dashboard = () => (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-2xl p-8 space-y-6 bg-white rounded-lg shadow-md">
-        <div className="text-center">
-          <div className="inline-block w-16 h-16 bg-gradient-to-r from-green-500 to-blue-600 rounded-full mb-4 flex items-center justify-center">
-            <span className="text-white text-2xl font-bold">{user.username.charAt(0).toUpperCase()}</span>
-          </div>
-          <h1 className="text-3xl font-bold text-gray-900">Welcome to Dashboard</h1>
-          <p className="text-gray-600">You have successfully logged in!</p>
-        </div>
-        
-        <div className="bg-gray-50 p-6 rounded-lg">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">User Information</h2>
-          <div className="space-y-2">
-            <p><span className="font-medium">Username:</span> {user.username}</p>
-            <p><span className="font-medium">Email:</span> {user.email}</p>
-            <p><span className="font-medium">Role:</span> 
-              <span className={`ml-2 px-2 py-1 rounded text-sm ${
-                user.role === 'admin' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'
-              }`}>
-                {user.role}
-              </span>
-            </p>
-          </div>
-        </div>
-
-        <div className="text-center">
-          <button
-            onClick={handleLogout}
-            className="px-6 py-2 text-white bg-gradient-to-r from-red-500 to-red-600 rounded-md hover:from-red-600 hover:to-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
-          >
-            Logout
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-
   // If user is logged in, show dashboard
   if (user) {
-    return <Dashboard />;
+    return (<Dashboard user={user} onLogout={handleLogout} />);
   }
-
+  
   // Authentication form
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">

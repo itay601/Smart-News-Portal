@@ -24,39 +24,50 @@ import DataFetchingPage from './dashboard/DataFetchingPage';
 import StocksFetch from './dashboard/StocksFetch';
 import SignInPage from './authPages/SignInPage';
 import DataCenter from './dashboard/DataCenter';
+import SaasHomepage from './SaasHomePage';
 
-
-const Dashboard = () => {
+const Dashboard = ({user, onLogout}) => {
     const [activePage, setActivePage] = useState('Dashboard');
     const [isSidebarOpen, setSidebarOpen] = useState(true);
     const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     const handleSignIn = () => setIsLoggedIn(true);
-    const handleSignOut = () => setIsLoggedIn(false);
+    
+    if (!user && !isLoggedIn) {
+        return <SignInPage onSignIn={handleSignIn} />;
+    }
+
+    const handleSignOut = () => {
+        if (onLogout) {
+            onLogout();
+        }
+        // Clear stored data
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('userData');
+        
+        // Redirect to home route
+        window.location.href = '/';
+    };
 
     const renderPage = () => {
         switch (activePage) {
             case 'Dashboard':
-                return <DashboardHome />;
+                return <DashboardHome user={user} />;
             case 'Chat Agent':
-                return <ChatAgentPage />;
+                return <ChatAgentPage user={user} />;
             case 'Agent Analysis':
-                return <AgentAnalysisPage />;
+                return <AgentAnalysisPage user={user} />;
             case 'Data Fetching':
-                return <DataFetchingPage />;
+                return <DataFetchingPage user={user} />;
             case 'Stocks Fetching':
-                return <StocksFetch />;
+                return <StocksFetch user={user} />;
             case 'Data Center':
-                return <DataCenter />;    
+                return <DataCenter user={user} />;    
             default:
-                return <DashboardHome />;
+                return <DashboardHome user={user} />;
         }
     };
-
-    if (!isLoggedIn) {
-        return <SignInPage onSignIn={handleSignIn} />;
-    }
 
     return (
         <div className="flex h-screen bg-gray-50">
@@ -69,6 +80,7 @@ const Dashboard = () => {
                 isMobileMenuOpen={isMobileMenuOpen} 
                 setMobileMenuOpen={setMobileMenuOpen}
                 handleSignOut={handleSignOut}
+                user={user}
             />
 
             {/* Main Content */}
@@ -77,7 +89,8 @@ const Dashboard = () => {
                     isSidebarOpen={isSidebarOpen} 
                     setSidebarOpen={setSidebarOpen} 
                     isMobileMenuOpen={isMobileMenuOpen} 
-                    setMobileMenuOpen={setMobileMenuOpen} 
+                    setMobileMenuOpen={setMobileMenuOpen}
+                    user={user}
                 />
                 <main className="flex-1 overflow-x-hidden overflow-y-auto p-8">
                     {renderPage()}

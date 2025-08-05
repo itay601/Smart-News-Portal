@@ -1,6 +1,6 @@
 // Helper function to verify admin role
 const requireAdmin = (user) => {
-  if (!user) {
+  if (!user.username) {
     throw new Error('Authentication required');
   }
   if (user.role !== 'admin') {

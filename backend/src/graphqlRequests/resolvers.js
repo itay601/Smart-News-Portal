@@ -1,4 +1,6 @@
 const { getUserFromToken } = require('../auth/auth');
+const requireAdmin = require('../auth/adminCheck');
+
 
 const resolvers = {
   Query: {
@@ -20,8 +22,9 @@ const resolvers = {
       }
     },
     getAllUsers: async (_, __, {cache ,pool, context }) => {
-      // const currentUser = await getUserFromToken(context.token);
-      // requireAdmin(currentUser);
+      if (!context.user) {
+        throw new Error('Authentication required');
+      }
       const cachedUsers = cache.get('users');
         if (cachedUsers) {
           console.log('Returning articles from cache');
@@ -34,37 +37,42 @@ const resolvers = {
       console.log('Returning users from database');
       return rows;
     },
+
+
     // Admin-only: Get specific user by username
-    getUserByUsername: async (_, { username }, { pool, context }) => {
-      // const currentUser = await getUserFromToken(context.token);
-      // requireAdmin(currentUser);
+    getUserByUsername: async (_, { username }, context ) => {
+      requireAdmin(context.user);
       
-      const [rows] = await pool.query(
+      const [rows] = await context.pool.query(
         'SELECT username, email, role FROM user WHERE username = ?',
         [username]
       );
       
       if (rows.length === 0) {
-        throw new Error('User not found');
+        return null;
       }
       
       return rows[0];
     },
+
+
     // Admin-only: Get user with password history
-    getUserWithPasswords: async (_, { username }, { pool, context }) => {
-       const currentUser = await getUserFromToken(context.token);
-       requireAdmin(currentUser);
+   getUserWithPasswords: async (_, { username }, context) => {
+      if (!context.user) {
+        return null;
+      }
+      requireAdmin(context.user);
       
-      const [userResult] = await pool.query(
+      const [userResult] = await context.pool.query(
         'SELECT username, email, role FROM user WHERE username = ?',
         [username]
       );
       
       if (userResult.length === 0) {
-        throw new Error('User not found');
+        return null;
       }
       
-      const [passwordResult] = await pool.query(
+      const [passwordResult] = await context.pool.query(
         'SELECT passwordtemp, passwordsecond, passwordthird FROM userpass WHERE uname = ?',
         [username]
       );
@@ -81,17 +89,17 @@ const resolvers = {
         passwordThird: passwords.passwordthird,
       };
     },
-    // Regular user: Get own profile TODO:
-    me: async (_, __, { context }) => {
-      // Ensure that getUserFromToken is defined and imported correctly
-      const currentUser = await getUserFromToken(context.token);
-      if (!currentUser) {
+    me: async (_, __, context) => {
+      if (!context.user) {
         throw new Error('Authentication required');
       }
-      return currentUser;
+      return context.user;
     },
     // Get all related TWEETS
-    tweets: async (_, __, { cache, pool }) => {
+    tweets: async (_, __, { cache, pool , context }) => {
+      if(!context.user){
+        return null;
+      }
       try {
         const cachedStockPrices = cache.get('tweets');
         if (cachedStockPrices) {
@@ -106,7 +114,7 @@ const resolvers = {
         return rows;
       } catch (error) {
         console.error('Error fetching tweets:', error);
-        throw new Error('Failed to fetch tweets');
+        return null;
       }
     },
     // Get all stock prices

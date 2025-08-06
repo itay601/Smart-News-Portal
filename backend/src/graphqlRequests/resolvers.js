@@ -21,8 +21,9 @@ const resolvers = {
         throw new Error('Failed to fetch articles');
       }
     },
-    getAllUsers: async (_, __, {cache ,pool, context }) => {
-      if (!context.user) {
+    getAllUsers: async (_, __, context ) => {
+      const { cache, pool, user } = context;
+      if (!user) {
         throw new Error('Authentication required');
       }
       const cachedUsers = cache.get('users');
@@ -96,20 +97,20 @@ const resolvers = {
       return context.user;
     },
     // Get all related TWEETS
-    tweets: async (_, __, { cache, pool , context }) => {
+    tweets: async (_, __, context ) => {
       if(!context.user){
         return null;
       }
       try {
-        const cachedStockPrices = cache.get('tweets');
+        const cachedStockPrices = context.cache.get('tweets');
         if (cachedStockPrices) {
           console.log('Returning tweets from cache');
           return cachedStockPrices;
         }
         
         // Assuming that the table "stock_prices" exists in your database
-        const [rows] = await pool.query('SELECT * FROM tweets ORDER BY reply_count, like_count LIMIT 20');
-        cache.set('tweets', rows, 10);
+        const [rows] = await context.pool.query('SELECT * FROM tweets ORDER BY reply_count, like_count LIMIT 20');
+        context.cache.set('tweets', rows, 10);
         console.log('Returning stock prices from database');
         return rows;
       } catch (error) {
@@ -163,7 +164,8 @@ const resolvers = {
   },
 
   Mutation: {
-    deleteArticle: async (_, { id }, { user, cache, pool }) => {
+    deleteArticle: async (_, { id }, { context }) => {
+      const { cache, pool, user } = context;
       if (!user) {
         throw new Error("You must be signed in to delete an article.");
       }

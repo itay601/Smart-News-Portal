@@ -68,7 +68,7 @@ app.get('/health', (req, res) => {
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  context: (req) => buildContext(req, cache, pool),
+  context: ({ req }) => buildContext({ req }, cache, pool),
   //Apollo’s built-in cache control settings.
   cacheControl: {
     defaultMaxAge: 30,

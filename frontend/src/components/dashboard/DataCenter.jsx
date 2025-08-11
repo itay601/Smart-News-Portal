@@ -54,6 +54,7 @@ const DataCenter = () => {
                         tweet_id
                         author_id
                         created_at
+                        text
                         retweet_count
                         reply_count
                         like_count

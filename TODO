@@ -1,0 +1,13 @@
+TODO:
+
+
+-- Add calender of importent economic ocations . 
+
+-- Setup Redis middleware chaching endpoint in backend .
+
+-- add option in backend of labeling data and save in 
+	ASTRA database for future finetuning .
+
+-- finetune free model and dockerized it
+
+

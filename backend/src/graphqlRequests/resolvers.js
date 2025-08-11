@@ -4,6 +4,26 @@ const requireAdmin = require('../auth/adminCheck');
 
 const resolvers = {
   Query: {
+    calenderEvents: async (_, __, context) => {
+      if(!context.user){
+        throw new Error('Authentication required');
+      }
+      try {
+        const cachedEvents = context.cache.get('Events');
+        if (cachedEvents) {
+          console.log('Returning Events from cache');
+          return cachedEvents;
+        }
+        
+        const [rows] = await context.pool.query('SELECT * FROM calendar');
+        context.cache.set('Events', rows, 10);
+        console.log('Returning Events from database');
+        return rows;
+      } catch (error) {
+        console.error('Error fetching Events:', error);
+        throw new Error('Failed to fetch Events');
+      }
+    },
     articles: async (_, __, { cache, pool }) => {
       try {
         const cachedArticles = cache.get('articles');
@@ -12,7 +32,7 @@ const resolvers = {
           return cachedArticles;
         }
         
-        const [rows] = await pool.query('SELECT * FROM articles_table ORDER BY publishedAt LIMIT 100');
+        const [rows] = await pool.query('SELECT * FROM articles_table ORDER BY RAND() LIMIT 500');
         cache.set('articles', rows, 10);
         console.log('Returning articles from database');
         return rows;
@@ -107,11 +127,9 @@ const resolvers = {
           console.log('Returning tweets from cache');
           return cachedStockPrices;
         }
-        
-        // Assuming that the table "stock_prices" exists in your database
-        const [rows] = await context.pool.query('SELECT * FROM tweets ORDER BY reply_count, like_count LIMIT 20');
+        const [rows] = await context.pool.query('SELECT * FROM tweets ORDER BY RAND()');
         context.cache.set('tweets', rows, 10);
-        console.log('Returning stock prices from database');
+        console.log('Returning tweets from database');
         return rows;
       } catch (error) {
         console.error('Error fetching tweets:', error);
@@ -126,8 +144,6 @@ const resolvers = {
           console.log('Returning stock prices from cache');
           return cachedStockPrices;
         }
-        
-        // Assuming that the table "stock_prices" exists in your database
         const [rows] = await pool.query('SELECT * FROM stock_prices ORDER BY symbol, date');
         cache.set('stockPrices', rows, 10);
         console.log('Returning stock prices from database');
@@ -153,7 +169,7 @@ const resolvers = {
           [symbol]
         );
 
-        cache.set(cacheKey, rows, 10); // Cache per symbol
+        cache.set(cacheKey, rows, 10); 
         console.log('Returning stock prices from database');
         return rows;
       } catch (error) {

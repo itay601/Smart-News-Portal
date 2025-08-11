@@ -10,7 +10,7 @@ const helmet = require('helmet');
 const cors = require('cors');
 const {createDataAgentRouter,nvidiaAgentRouter,gemenaiAgentRouter, gemenaiCahtbotRouter} = require('./routes/dataForAgent');
 const {authenticationRouter, RegisterRouter} = require('./auth/auth');
-
+const {AddEventCalenderRouter } = require('./routes/calender');
 
 const pool = mysql.createPool({
   user: process.env.DB_USER,           
@@ -19,7 +19,7 @@ const pool = mysql.createPool({
   password: String(process.env.DB_PASSWORD),
   port: process.env.DB_PORT,           
 });
-// Create pool instance (you might want to pass this from server.js instead)
+//postgres--
 //const pool = new Pool({
 //  user: process.env.DB_USER,           
  // host: process.env.DB_HOST,           
@@ -40,24 +40,30 @@ app.use(cors({
 }));
 app.use(express.json());
 
+// ==================== Context Middleware for REST ====================
+function contextMiddleware(req, res, next) {
+  req.context = buildContext({ req }, cache, pool);
+  next();
+}
 
 //routers!!!
+const calanderAddEvent = AddEventCalenderRouter();
+app.use('/v1/api/calender', contextMiddleware , calanderAddEvent);
+
 const dataAgentRouter = createDataAgentRouter(pool);
-const gemenaiagentRouter = gemenaiAgentRouter(pool);
-const nvidiaagentRouter = nvidiaAgentRouter(pool);
-const gemenaicahtbotRouter = gemenaiCahtbotRouter(pool);
-
-
-const authRouter = authenticationRouter(pool);
-const regRouter = RegisterRouter(pool);
+const gemenaiagentRouter = gemenaiAgentRouter();
+const nvidiaagentRouter = nvidiaAgentRouter();
+const gemenaicahtbotRouter = gemenaiCahtbotRouter();
 app.use('/v1/api', dataAgentRouter);
 app.use('/v1/api', gemenaiagentRouter);
 app.use('/v1/api', nvidiaagentRouter);
 app.use('/v1/api', gemenaicahtbotRouter);
 
-
+const authRouter = authenticationRouter(pool);
+const regRouter = RegisterRouter(pool);
 app.use('/v1/auth', authRouter );
 app.use('/v1/auth', regRouter);
+
 
 
 app.get('/health', (req, res) => {

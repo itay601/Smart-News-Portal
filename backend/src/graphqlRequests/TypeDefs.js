@@ -45,12 +45,19 @@ const typeDefs = gql`
     tweet_id: ID!
     author_id: String!
     created_at: String!
+    text: String!
     retweet_count: Int!
     reply_count: Int!
     like_count: Int!
     quote_count: Int!
     lang: String!
   }
+
+  type Events {
+    date: String!
+    title: String!
+    url: String!
+  }  
 
   type Query {
     articles: [Article]
@@ -61,6 +68,7 @@ const typeDefs = gql`
     stockPrices: [StockPrice]
     specificStockPrices(symbol: String!) : [StockPrice]
     tweets: [Tweet!]!
+    calenderEvents: [Events]
   }
    
   type AuthPayload {

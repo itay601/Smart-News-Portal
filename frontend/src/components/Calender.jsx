@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { Home } from 'lucide-react';
+import NavItem from './dashboard/NavItem';
+import { Link } from "react-router-dom";
+
 
 // Simple date formatting utilities
 const formatDate = (date) => {
@@ -377,6 +381,13 @@ function MyCalendar() {
           >
             {loading ? 'Loading...' : 'Refresh Events'}
           </button>
+          <ul>
+              <li>
+                   <Link to="/">
+                      <NavItem icon={<Home size={20} />} label="Home-Page" />
+                   </Link>
+              </li>
+          </ul>
         </div>
 
         {/* Calendar and Events Layout */}

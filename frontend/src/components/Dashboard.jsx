@@ -11,7 +11,8 @@ import {
     Menu, 
     //X,
     Search,
-    Bell
+    Bell,
+    Calendar
     
 } from 'lucide-react';
 
@@ -25,6 +26,8 @@ import StocksFetch from './dashboard/StocksFetch';
 import SignInPage from './authPages/SignInPage';
 import DataCenter from './dashboard/DataCenter';
 import SaasHomepage from './SaasHomePage';
+import Calender from './Calender';
+
 
 const Dashboard = ({user, onLogout}) => {
     const [activePage, setActivePage] = useState('Dashboard');
@@ -64,6 +67,8 @@ const Dashboard = ({user, onLogout}) => {
                 return <StocksFetch user={user} />;
             case 'Data Center':
                 return <DataCenter user={user} />;    
+            case 'Calendar':
+                return <Calender user={user} />;    
             default:
                 return <DashboardHome user={user} />;
         }
@@ -72,7 +77,7 @@ const Dashboard = ({user, onLogout}) => {
     return (
         <div className="flex h-screen bg-gray-50">
             {/* Sidebar */}
-            <Sidebar 
+             <Sidebar 
                 activePage={activePage} 
                 setActivePage={setActivePage} 
                 isSidebarOpen={isSidebarOpen} 

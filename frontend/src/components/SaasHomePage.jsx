@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ChevronRight, Check, Star, Users, Zap, Shield, ArrowRight, Menu, X } from 'lucide-react';
+import { useNavigate } from "react-router-dom";
 
 // Data constants
 const FEATURES_DATA = [
@@ -140,7 +141,8 @@ const Section = ({ children, className = "", background = "default" }) => {
 // Navigation Component
 const Navigation = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  
+  const navigate = useNavigate();
+
   return (
     <nav className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
       <Container>
@@ -163,7 +165,7 @@ const Navigation = () => {
           </div>
 
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="ghost" size="sm">Sign In</Button>
+            <Button onClick={() => navigate("/sighin")} variant="ghost" size="sm">Sign In</Button>
             <Button size="sm">Get Started</Button>
           </div>
 
@@ -193,7 +195,9 @@ const Navigation = () => {
               </a>
             ))}
             <div className="pt-4 pb-3 border-t border-gray-200">
-              <button className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700">
+              <button
+                onClick={() => navigate("/sighin")} 
+                className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700">
                 Sign In
               </button>
               <button className="block w-full text-left px-3 py-2 text-base font-medium bg-blue-600 text-white rounded-lg mt-2">

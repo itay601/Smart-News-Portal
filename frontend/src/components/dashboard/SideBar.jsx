@@ -1,8 +1,13 @@
 import React from 'react';
-import { BarChart2, MessageSquare, Search, Database, Settings, LogOut, ChevronLeft, GitGraphIcon, LucideArchiveX } from 'lucide-react';
+import { BarChart2, MessageSquare, Search, Database, Settings, LogOut, ChevronLeft, GitGraphIcon, LucideArchiveX, Calendar, Home } from 'lucide-react';
 import NavItem from './NavItem';
+import { Link } from "react-router-dom";
 
 const Sidebar = ({ activePage, setActivePage, isSidebarOpen, setSidebarOpen, isMobileMenuOpen, setMobileMenuOpen, handleSignOut }) => {
+    //const token = localStorage.getItem('authToken');
+    const userData = localStorage.getItem('userData');
+    const parsedUser = typeof userData === "string" ? JSON.parse(userData) : userData;
+
     const sidebarContent = (
         <div className="flex flex-col h-full">
             {/* Header */}
@@ -29,20 +34,34 @@ const Sidebar = ({ activePage, setActivePage, isSidebarOpen, setSidebarOpen, isM
                     <NavItem icon={<LucideArchiveX size={20} />} label="Data Fetching" isActive={activePage === 'Data Fetching'} onClick={() => setActivePage('Data Fetching')} />
                     <NavItem icon={<GitGraphIcon size={20} />} label="Stocks Fetching" isActive={activePage === 'Stocks Fetching'} onClick={() => setActivePage('Stocks Fetching')} />
                     <NavItem icon={<Database size={20} />} label="Data Center" isActive={activePage === 'Data Center'} onClick={() => setActivePage('Data Center')} />
+                    <NavItem icon={<Calendar size={20} />} label="Calendar" isActive={activePage === 'Calendar'} onClick={() => setActivePage('Calendar')} />
+
                 </ul>
             </nav>
 
             {/* Footer */}
             <div className="px-2 py-4 border-t">
                 <ul>
-                    <NavItem icon={<Settings size={20} />} label="Settings" />
+                    <li>
+                        <Link to="/">
+                            <NavItem icon={<Home size={20} />} label="Home-Page" />
+                        </Link>
+                    </li>
                 </ul>
+                <ul>
+                    <li>
+                        <Link to="/settings">
+                            <NavItem icon={<Settings size={20} />} label="Settings" />
+                        </Link>
+                    </li>
+                </ul>
+                
                 <div className="p-3 mt-4 rounded-lg bg-gray-100 flex items-center">
                     <img src="https://placehold.co/40x40/E2E8F0/4A5568?text=U" alt="User" className="w-10 h-10 rounded-full" />
                     {isSidebarOpen && (
                         <div className="ml-3">
-                            <p className="font-semibold text-sm">User Name</p>
-                            <p className="text-xs text-gray-500">user@example.com</p>
+                            <p className="font-semibold text-sm">{parsedUser.username}</p>
+                            <p className="text-xs text-gray-500">{parsedUser.email}</p>
                         </div>
                     )}
                 </div>

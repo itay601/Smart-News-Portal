@@ -8,10 +8,10 @@ const mysql = require('mysql2/promise'); // Pool for pg  or  require('mysql2')
 const buildContext = require('./graphqlRequests/context');
 const helmet = require('helmet');
 const cors = require('cors');
-const {createDataAgentRouter,nvidiaAgentRouter,gemenaiAgentRouter, gemenaiCahtbotRouter} = require('./routes/dataForAgent');
+const {createDataAgentRouter,nvidiaAgentRouter,gemenaiAgentRouter, gemenaiCahtbotRouter, userPrefTradingCahtbotCronjobAPIRouter , userPrefTradingCahtbotRouter} = require('./routes/dataForAgent');
 const {authenticationRouter, RegisterRouter} = require('./auth/auth');
 const {AddEventCalenderRouter } = require('./routes/calender');
-
+const {GetRedisDataStateAndAstraTradingPortfolio} = require('./routes/tradingPortfolio');
 const pool = mysql.createPool({
   user: process.env.DB_USER,           
   host: process.env.DB_HOST,           
@@ -47,6 +47,9 @@ function contextMiddleware(req, res, next) {
 }
 
 //routers!!!
+const tradingPortfolioRouter = GetRedisDataStateAndAstraTradingPortfolio();
+app.use('/v1/api', contextMiddleware , tradingPortfolioRouter);
+
 const calanderAddEvent = AddEventCalenderRouter();
 app.use('/v1/api/calender', contextMiddleware , calanderAddEvent);
 
@@ -54,6 +57,11 @@ const dataAgentRouter = createDataAgentRouter(pool);
 const gemenaiagentRouter = gemenaiAgentRouter();
 const nvidiaagentRouter = nvidiaAgentRouter();
 const gemenaicahtbotRouter = gemenaiCahtbotRouter();
+const userPrefRouter = userPrefTradingCahtbotRouter();
+const userPrefCronjobRouter = userPrefTradingCahtbotCronjobAPIRouter();
+
+app.use('/v1/api', userPrefRouter);
+app.use('/v1/api', userPrefCronjobRouter);
 app.use('/v1/api', dataAgentRouter);
 app.use('/v1/api', gemenaiagentRouter);
 app.use('/v1/api', nvidiaagentRouter);

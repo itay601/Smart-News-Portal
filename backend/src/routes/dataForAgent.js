@@ -128,9 +128,82 @@ function gemenaiCahtbotRouter() {
   return router;
 }
 
+function userPrefTradingCahtbotRouter() {
+  const router = express.Router();
 
+  router.post("/userTradingAgents", async (req, res) => {
+    const {
+      user_email,
+      query,
+      budget,
+      risk,
+      mode,
+      strategy,
+      stop_loss,
+      take_profit,
+      max_drawdown,
+      leverage,
+      trade_frequency,
+      preferred_markets,
+    } = req.body;
+
+    // Validate required fields
+    if (!user_email || !query || !budget || !mode) {
+      return res.status(400).json({
+        error: "user_email and query are required fields.",
+      });
+    }
+
+    const chatbotURL = "http://chatbot-service:9090/chatbot/userTradingAgents";
+
+    try {
+      // Forward request to chatbot service
+      const response = await axios.post(chatbotURL, {
+        user_email,
+        query,
+        budget,
+        risk,
+        mode,
+        strategy,
+        stop_loss,
+        take_profit,
+        max_drawdown,
+        leverage,
+        trade_frequency,
+        preferred_markets,
+      });
+
+      // Return chatbot's response
+      res.json(response.data);
+    } catch (error) {
+      console.error("Error communicating with chatbot service:", error.message);
+      res.status(500).json({ error: "Failed to talk to chatbot service." });
+    }
+  });
+
+  return router;
+}
+
+function userPrefTradingCahtbotCronjobAPIRouter() {
+    const router = express.Router();
+    router.get("/cronTradingAgents", async (req, res) => {
+    const chatbotURL = "http://chatbot-service:9090/chatbot/cronTradingAgents";
+
+    try {
+      const response = await axios.get(chatbotURL);
+      res.json(response.data);
+    } catch (error) {
+      console.error("Error communicating with chatbot service:", error.message);
+      res.status(500).json({ error: "Failed to talk to chatbot service." });
+    }
+  });
+
+  return router;
+}
 
 module.exports ={
+  userPrefTradingCahtbotCronjobAPIRouter,
+  userPrefTradingCahtbotRouter,
   createDataAgentRouter,
   nvidiaAgentRouter,
   gemenaiAgentRouter,

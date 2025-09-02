@@ -27,7 +27,7 @@ import SignInPage from './authPages/SignInPage';
 import DataCenter from './dashboard/DataCenter';
 import SaasHomepage from './SaasHomePage';
 import Calender from './Calender';
-
+import UserPreferencesPage from './dashboard/UserPreferencesPage';
 
 const Dashboard = ({user, onLogout}) => {
     const [activePage, setActivePage] = useState('Dashboard');
@@ -61,6 +61,8 @@ const Dashboard = ({user, onLogout}) => {
                 return <ChatAgentPage user={user} />;
             case 'Agent Analysis':
                 return <AgentAnalysisPage user={user} />;
+            case 'User Preferences':
+                return <UserPreferencesPage user={user} />;    
             case 'Data Fetching':
                 return <DataFetchingPage user={user} />;
             case 'Stocks Fetching':

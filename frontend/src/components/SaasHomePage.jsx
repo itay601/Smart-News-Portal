@@ -211,47 +211,58 @@ const Navigation = () => {
   );
 };
 
+
 // Hero Section Component
-const HeroSection = () => (
-  <Section>
-    <Container>
-      <div className="text-center">
-        <div className="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium mb-8">
-          <span>✨ New: Advanced Analytics Dashboard</span>
-          <ChevronRight className="w-4 h-4 ml-1" />
+const HeroSection = () => {
+  const WALLET_ADDRESS = "0xD8950b35302bB2c1E9363b0D834272602C1C0777"; // replace with your real wallet
+
+  return (
+    <Section>
+      <Container>
+        <div className="text-center">
+          <div className="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium mb-8">
+            <span>✨ New: Advanced Analytics Dashboard</span>
+            <ChevronRight className="w-4 h-4 ml-1" />
+          </div>
+          
+          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+            Build Your Business
+            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"> Faster</span>
+          </h1>
+
+          {/* Wallet address line */}
+          <p className="text-lg font-mono text-purple-700 mb-4">
+            🎁 Send Gifts To: <span className="font-bold">{WALLET_ADDRESS}</span>
+          </p>
+          
+          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+            The all-in-one platform that helps teams collaborate, analyze data, and scale their business with powerful tools and insights.
+          </p>
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+            <Button size="lg">
+              Start Free Trial
+              <ArrowRight className="w-5 h-5 ml-2" />
+            </Button>
+            <Button variant="secondary" size="lg">
+              Watch Demo
+            </Button>
+          </div>
+          
+          <div className="flex flex-wrap justify-center items-center gap-8 text-gray-500 text-sm">
+            {["14-day free trial", "No credit card required", "Cancel anytime"].map((text) => (
+              <div key={text} className="flex items-center">
+                <Check className="w-5 h-5 text-green-500 mr-2" />
+                {text}
+              </div>
+            ))}
+          </div>
         </div>
-        
-        <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-          Build Your Business
-          <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"> Faster</span>
-        </h1>
-        
-        <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-          The all-in-one platform that helps teams collaborate, analyze data, and scale their business with powerful tools and insights.
-        </p>
-        
-        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-          <Button size="lg">
-            Start Free Trial
-            <ArrowRight className="w-5 h-5 ml-2" />
-          </Button>
-          <Button variant="secondary" size="lg">
-            Watch Demo
-          </Button>
-        </div>
-        
-        <div className="flex flex-wrap justify-center items-center gap-8 text-gray-500 text-sm">
-          {["14-day free trial", "No credit card required", "Cancel anytime"].map((text) => (
-            <div key={text} className="flex items-center">
-              <Check className="w-5 h-5 text-green-500 mr-2" />
-              {text}
-            </div>
-          ))}
-        </div>
-      </div>
-    </Container>
-  </Section>
-);
+      </Container>
+    </Section>
+  );
+};
+
 
 // Feature Card Component
 const FeatureCard = ({ icon, title, description }) => (

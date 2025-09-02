@@ -1,5 +1,5 @@
 import React from 'react';
-import { BarChart2, MessageSquare, Search, Database, Settings, LogOut, ChevronLeft, GitGraphIcon, LucideArchiveX, Calendar, Home } from 'lucide-react';
+import { BarChart2, MessageSquare, Search, Database, Settings, LogOut, ChevronLeft, GitGraphIcon, LucideArchiveX, Calendar, Home , BotIcon} from 'lucide-react';
 import NavItem from './NavItem';
 import { Link } from "react-router-dom";
 
@@ -35,7 +35,7 @@ const Sidebar = ({ activePage, setActivePage, isSidebarOpen, setSidebarOpen, isM
                     <NavItem icon={<GitGraphIcon size={20} />} label="Stocks Fetching" isActive={activePage === 'Stocks Fetching'} onClick={() => setActivePage('Stocks Fetching')} />
                     <NavItem icon={<Database size={20} />} label="Data Center" isActive={activePage === 'Data Center'} onClick={() => setActivePage('Data Center')} />
                     <NavItem icon={<Calendar size={20} />} label="Calendar" isActive={activePage === 'Calendar'} onClick={() => setActivePage('Calendar')} />
-
+                    <NavItem icon={<BotIcon size={20} />} label="User Preferences" isActive={activePage === 'User Preferences'} onClick={() => setActivePage('User Preferences')} />
                 </ul>
             </nav>
 

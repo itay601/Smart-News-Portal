@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@datastax/astra-db-ts": "^2.0.2",
     "apollo-server-express": "^3.13.0",
     "axios": "^1.11.0",
     "bcrypt": "^6.0.0",
@@ -21,6 +22,7 @@
     "node-cache": "^5.1.2",
     "pg": "^8.16.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "redis": "^5.8.2"
   }
 }

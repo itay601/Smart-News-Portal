@@ -12,6 +12,8 @@ const {createDataAgentRouter,nvidiaAgentRouter,gemenaiAgentRouter, gemenaiCahtbo
 const {authenticationRouter, RegisterRouter} = require('./auth/auth');
 const {AddEventCalenderRouter } = require('./routes/calender');
 const {GetRedisDataStateAndAstraTradingPortfolio} = require('./routes/tradingPortfolio');
+const {GetRedisDataStateAndAstraTradingPortfolio2} = require('./routes/statsPortfolio');
+
 const pool = mysql.createPool({
   user: process.env.DB_USER,           
   host: process.env.DB_HOST,           
@@ -47,6 +49,8 @@ function contextMiddleware(req, res, next) {
 }
 
 //routers!!!
+const statsPortfolioRouter = GetRedisDataStateAndAstraTradingPortfolio2();
+app.use('/v1/api', contextMiddleware , statsPortfolioRouter);
 const tradingPortfolioRouter = GetRedisDataStateAndAstraTradingPortfolio();
 app.use('/v1/api', contextMiddleware , tradingPortfolioRouter);
 

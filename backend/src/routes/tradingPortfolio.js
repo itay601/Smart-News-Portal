@@ -7,19 +7,19 @@ function GetRedisDataStateAndAstraTradingPortfolio() {
 
   router.get('/InvestmentAnalysisPortfolio', async (req, res) => {
     const { user, cache , pool } = req.context;
-    if(!user){
-      throw new Error('need to auth before');
-    }
+    //if(!user){
+    //  throw new Error('need to auth before');
+    //}
     
      // Astra collection
     const collection = getTradingCollection();
-    const docs = await collection.find({'user_email':user.user_email}).toArray();
+    const docs = await collection.find({'user_email':user.email}).toArray();
     console.log('Astra docs:', docs);
 
     // Redis state
-    //await setState('test@example.com', { balance: 500, positions: ['AAPL', 'TSLA'] });
-    const state = await getState(user.user_email);
-    console.log('Redis state:', state);
+    await setState('test@example.com', { balance: 500, positions: ['AAPL', 'TSLA'] });
+    const state = await getState(user.email);
+    //console.log('Redis state:', state);
 
 
 

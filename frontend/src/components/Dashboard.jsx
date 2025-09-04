@@ -28,6 +28,7 @@ import DataCenter from './dashboard/DataCenter';
 import SaasHomepage from './SaasHomePage';
 import Calender from './Calender';
 import UserPreferencesPage from './dashboard/UserPreferencesPage';
+import PortfolioPage from './dashboard/PortfolioPage';
 
 const Dashboard = ({user, onLogout}) => {
     const [activePage, setActivePage] = useState('Dashboard');
@@ -62,7 +63,9 @@ const Dashboard = ({user, onLogout}) => {
             case 'Agent Analysis':
                 return <AgentAnalysisPage user={user} />;
             case 'User Preferences':
-                return <UserPreferencesPage user={user} />;    
+                return <UserPreferencesPage user={user} />;
+            case 'Portfolio Page':
+                return <PortfolioPage user={user} />;    
             case 'Data Fetching':
                 return <DataFetchingPage user={user} />;
             case 'Stocks Fetching':

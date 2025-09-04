@@ -36,6 +36,8 @@ const Sidebar = ({ activePage, setActivePage, isSidebarOpen, setSidebarOpen, isM
                     <NavItem icon={<Database size={20} />} label="Data Center" isActive={activePage === 'Data Center'} onClick={() => setActivePage('Data Center')} />
                     <NavItem icon={<Calendar size={20} />} label="Calendar" isActive={activePage === 'Calendar'} onClick={() => setActivePage('Calendar')} />
                     <NavItem icon={<BotIcon size={20} />} label="User Preferences" isActive={activePage === 'User Preferences'} onClick={() => setActivePage('User Preferences')} />
+                    <NavItem icon={<BotIcon size={20} />} label="Portfolio Page" isActive={activePage === 'Portfolio Page'} onClick={() => setActivePage('Portfolio Page')} />
+                    
                 </ul>
             </nav>
 
